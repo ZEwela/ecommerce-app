@@ -13,7 +13,7 @@ const getCartModel = (sequelize, { DataTypes }) => {
       },
       paid: {
         type: DataTypes.BOOLEAN,
-        allowNull: false
+        defaultValue: false
       }
   },
   {
@@ -22,7 +22,7 @@ const getCartModel = (sequelize, { DataTypes }) => {
 
   Cart.associate = (models) => {
     Cart.belongsToMany(models.Product, { through: models.CartProduct, foreignKey: 'cart_id'});
-    Cart.belongsTo(models.User, { foreignKey: 'user_id', targetKey: 'user_id' });
+    Cart.hasOne(models.User, { foreignKey: 'user_id', targetKey: 'user_id' });
   };
 
 

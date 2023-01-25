@@ -12,6 +12,8 @@ import getOrderStatusModel from './order_status';
 import getProductPriceModel from './product_price';
 import getUserAddressModel from './user_address';
 import getCartProductModel from './cart_product';
+import getSessionModel from './session';
+
 
 const sequelize = new Sequelize(
   process.env.DATABASE,
@@ -34,8 +36,8 @@ const models = {
   ProductPrice: getProductPriceModel(sequelize, Sequelize),
   OrderStatus: getOrderStatusModel(sequelize, Sequelize),
   UserAddress: getUserAddressModel(sequelize, Sequelize),
-  CartProduct: getCartProductModel(sequelize, Sequelize)
-
+  CartProduct: getCartProductModel(sequelize, Sequelize),
+  Session: getSessionModel(sequelize, Sequelize),
 };
 
 Object.keys(models).forEach((key) => {

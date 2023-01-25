@@ -7,7 +7,7 @@ const getPriceModel = (sequelize, { DataTypes }) => {
             primaryKey: true
           },
         amount: {
-          type: DataTypes.DECIMAL,
+          type: DataTypes.FLOAT,
           allowNull: false,
           validate: {
             notEmpty: true,

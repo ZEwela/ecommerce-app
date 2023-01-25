@@ -7,5 +7,5 @@ export default {
   cart,
   user,
   order,
-  product
+  product,
 };
