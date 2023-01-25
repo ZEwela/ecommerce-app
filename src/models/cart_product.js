@@ -1,6 +1,6 @@
-const getOrderProductModel = (sequelize, { DataTypes }) => {
-    const OrderProduct= sequelize.define('order_product', {
-        order_product_id: {
+const getCartProductModel = (sequelize, { DataTypes }) => {
+    const CartProduct= sequelize.define('cart_product', {
+        cart_product_id: {
             type: DataTypes.INTEGER,
             // defaultValue: DataTypes.INTEGER,
             autoIncrement: true,
@@ -14,12 +14,12 @@ const getOrderProductModel = (sequelize, { DataTypes }) => {
               key: 'product_id'
             },
         },
-        order_id: {
+        cart_id: {
             type: DataTypes.INTEGER,
             primaryKey: false,
             references: {
-              model: 'order',
-              key: 'order_id'
+              model: 'cart',
+              key: 'cart_id'
             },
         }, 
         quantity: {
@@ -34,13 +34,13 @@ const getOrderProductModel = (sequelize, { DataTypes }) => {
       timestamps: false
     });
   
-    OrderProduct.associate = (models) => {
-        OrderProduct.belongsTo(models.Product, { foreignKey: 'product_id', targetKey: 'product_id' });
-        OrderProduct.belongsTo(models.Order, { foreignKey: 'order_id', targetKey: 'order_id' });
+    CartProduct.associate = (models) => {
+        CartProduct.belongsTo(models.Product, { foreignKey: 'product_id', targetKey: 'product_id' });
+        CartProduct.belongsTo(models.Cart, { foreignKey: 'cart_id', targetKey: 'cart_id' });
     };
 
   
-    return OrderProduct;
+    return CartProduct;
   };
   
-  export default getOrderProductModel;
+  export default getCartProductModel;

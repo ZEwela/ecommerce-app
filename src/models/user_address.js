@@ -22,6 +22,9 @@ const getUserAddressModel = (sequelize, { DataTypes }) => {
               key: 'address_id'
             },
         }
+    },
+    {
+      timestamps: false
     });
   
     UserAddress.associate = (models) => {

@@ -15,11 +15,15 @@ const getProductModel = (sequelize, { DataTypes }) => {
           },
         },
 
+    },
+    {
+      timestamps: false
     });
   
     Product.associate = (models) => {
         Product.belongsToMany(models.Price, { through: models.ProductPrice, foreignKey: 'product_id'});
         Product.belongsToMany(models.Order, { through: models.OrderProduct, foreignKey: 'product_id'});
+        Product.belongsToMany(models.Cart, { through: models.CartProduct, foreignKey: 'product_id'});
     };
 
   

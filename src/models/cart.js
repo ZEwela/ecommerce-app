@@ -1,22 +1,32 @@
 const getCartModel = (sequelize, { DataTypes }) => {
-    const Cart = sequelize.define('cart', {
-        quantity: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-              notEmpty: true,
-            },
-          },
-    });
-  
-    Cart.associate = (models) => {
-    //   Cart.hasMany(models.Product);
-    //   Cart.belongsTo(models.User);
+  const Cart = sequelize.define('cart', {
+      cart_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          autoIncrement: true,
+          primaryKey: true
+      },
+      user_id: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          primaryKey: false
+      },
+      paid: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+      }
+  },
+  {
+    timestamps: false
+  });
 
-    };
-
-  
-    return Cart;
+  Cart.associate = (models) => {
+    Cart.belongsToMany(models.Product, { through: models.CartProduct, foreignKey: 'cart_id'});
+    Cart.belongsTo(models.User, { foreignKey: 'user_id', targetKey: 'user_id' });
   };
-  
-  export default getCartModel;
+
+
+  return Cart;
+};
+
+export default getCartModel;

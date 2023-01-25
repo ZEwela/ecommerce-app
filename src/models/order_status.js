@@ -22,6 +22,9 @@ const getOrderStatusModel = (sequelize, { DataTypes }) => {
               key: 'status_id'
             },
         }
+    },
+    {
+      timestamps: false
     });
   
     OrderStatus.associate = (models) => {

@@ -41,14 +41,16 @@ const createDatabase = async() => {
         {
           username: 'ezawol',
           email: 'ezawol@gmail.com',
-          password: 'password'
+          password: 'password',
+          created_at: '2020-01-12'
         },
     ),
     await models.User.create(
         {
           username: 'karolo',
           email: 'karolo@gmail.com',
-          password: 'pssdaaae'
+          password: 'pssdaaae',
+          created_at: '2021-07-22'
         },
     ),
     await models.Product.create(
@@ -109,13 +111,15 @@ const createDatabase = async() => {
     await models.ProductPrice.create(
         {
             price_id: 1,
-            product_id: 1
+            product_id: 1,
+            created_at: '2020-03-23'
         }
     ),
     await models.ProductPrice.create(
         {
             price_id: 2,
-            product_id: 2
+            product_id: 2,
+            created_at: '2020-03-23'
         }
     ),
     await models.Status.create(
@@ -137,6 +141,7 @@ const createDatabase = async() => {
         {
             product_id: 2,
             price_id: 1,
+            created_at: '2022-03-23'
         }
     ),
     await models.Order.create(
@@ -182,6 +187,19 @@ const createDatabase = async() => {
         {
             order_id: 2,
             status_id: 1
+        }
+    ),
+    await models.Cart.create(
+        {
+            user_id: 1,
+            paid: false
+        }
+    ),
+    await models.CartProduct.create(
+        {
+            cart_id: 1,
+            product_id: 2,
+            quantity: 30
         }
     )
 };

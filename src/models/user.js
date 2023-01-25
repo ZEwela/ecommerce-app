@@ -30,11 +30,18 @@ const getUserModel = (sequelize, { DataTypes }) => {
             notEmpty: true,
         },
       },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false
+      }
+    },
+    {
+      timestamps: false
     });
   
     User.associate = (models) => {
-      User.hasMany(models.Order, { onDelete: 'CASCADE' });
-      User.hasOne(models.Cart, { onDelete: 'CASCADE' });
+      User.hasMany(models.Order, { onDelete: 'CASCADE',foreignKey: 'user_id', targetKey: 'user_id' });
+      User.hasOne(models.Cart, { onDelete: 'CASCADE',foreignKey: 'user_id', targetKey: 'user_id' });
       User.belongsToMany(models.Address, { through: models.UserAddress, foreignKey: 'user_id'});
 
     };

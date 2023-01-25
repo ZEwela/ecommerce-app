@@ -21,7 +21,14 @@ const getProductPriceModel = (sequelize, { DataTypes }) => {
               model: 'price',
               key: 'price_id'
             },
+        },
+        created_at: {
+            type: DataTypes.DATE,
+            allowNull: false
         }
+    },
+    {
+      timestamps: false
     });
   
     ProductPrice.associate = (models) => {

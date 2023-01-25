@@ -9,18 +9,17 @@ const getOrderModel = (sequelize, { DataTypes }) => {
         user_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            primaryKey: false,
-            reference: {
-                model: 'user',
-                key: 'user_id'
-            }
+            primaryKey: false
         }
+    },
+    {
+      timestamps: false
     });
   
     Order.associate = (models) => {
       Order.belongsToMany(models.Product, { through: models.OrderProduct, foreignKey: 'order_id'});
       Order.belongsToMany(models.Status, { through: models.OrderStatus, foreignKey: 'order_id'});
-      Order.hasOne(models.User, {foreignKey: 'user_id'});
+      Order.belongsTo(models.User, { foreignKey: 'user_id', targetKey: 'user_id' });
     };
 
   

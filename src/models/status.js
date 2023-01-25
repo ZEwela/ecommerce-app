@@ -13,6 +13,9 @@ const getStatusModel = (sequelize, { DataTypes }) => {
               notEmpty: true,
             },
         }
+    },
+    {
+      timestamps: false
     });
   
     Status.associate = (models) => {

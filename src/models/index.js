@@ -11,6 +11,7 @@ import getOrderProductModel from './order_product';
 import getOrderStatusModel from './order_status';
 import getProductPriceModel from './product_price';
 import getUserAddressModel from './user_address';
+import getCartProductModel from './cart_product';
 
 const sequelize = new Sequelize(
   process.env.DATABASE,
@@ -32,7 +33,8 @@ const models = {
   OrderProduct: getOrderProductModel(sequelize, Sequelize),
   ProductPrice: getProductPriceModel(sequelize, Sequelize),
   OrderStatus: getOrderStatusModel(sequelize, Sequelize),
-  UserAddress: getUserAddressModel(sequelize, Sequelize)
+  UserAddress: getUserAddressModel(sequelize, Sequelize),
+  CartProduct: getCartProductModel(sequelize, Sequelize)
 
 };
 

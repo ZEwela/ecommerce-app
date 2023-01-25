@@ -50,6 +50,9 @@ const getAddressModel = (sequelize, { DataTypes }) => {
                 notEmpty: true,
             }
         }
+    },
+    {
+      timestamps: false
     });
   
     Address.associate = (models) => {

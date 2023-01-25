@@ -13,6 +13,9 @@ const getPriceModel = (sequelize, { DataTypes }) => {
             notEmpty: true,
           },
         },
+    },
+    {
+      timestamps: false
     });
   
     Price.associate = (models) => {
