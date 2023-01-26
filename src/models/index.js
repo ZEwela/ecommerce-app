@@ -13,6 +13,7 @@ import getProductPriceModel from './product_price';
 import getUserAddressModel from './user_address';
 import getCartProductModel from './cart_product';
 import getSessionModel from './session';
+import getCategoryModel from './category';
 
 
 const sequelize = new Sequelize(
@@ -38,6 +39,7 @@ const models = {
   UserAddress: getUserAddressModel(sequelize, Sequelize),
   CartProduct: getCartProductModel(sequelize, Sequelize),
   Session: getSessionModel(sequelize, Sequelize),
+  Category: getCategoryModel(sequelize, Sequelize)
 };
 
 Object.keys(models).forEach((key) => {

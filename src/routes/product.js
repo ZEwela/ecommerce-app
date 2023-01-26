@@ -3,6 +3,15 @@ import { Router } from "express";
 const router = Router();
 
 router.get('/', async (req, res, next) => {
+    const category = req.query.category;
+    if (category) {
+        const productsByCategory = await req.context.models.Product.findAll({
+            where: {
+                category_id: category
+            }
+        });
+        return res.send(productsByCategory);
+    }
     const products = await req.context.models.Product.findAll();
     return res.send(products);
 });
@@ -11,6 +20,7 @@ router.get('/:id', async (req, res, next) => {
     const product = await req.context.models.Product.findByPk(req.params.id);
     return res.send(product);
 });
+
 
 router.post('/', async(req,res, next) => {
     const newproduct = await req.context.models.Product.create({
