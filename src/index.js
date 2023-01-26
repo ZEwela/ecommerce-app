@@ -3,11 +3,12 @@ import express from 'express';
 import cors from 'cors';
 import models, { sequelize } from './models';
 import routes from './routes';
+import { DATE } from 'sequelize';
 const session = require("express-session");
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
 const app = express();
-
 const port = process.env.PORT;
 
 app.use(
@@ -23,6 +24,8 @@ app.use(
     })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -35,47 +38,80 @@ app.use((req, res, next ) => {
     next();
 });
 
+passport.serializeUser((user, done) => {
+    console.log(user);
+    done(null, user.user_id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await req.context.models.User.findByPk(id);
+      done(null, user);
+    } catch (err) {
+      done(err);
+    }
+  });
+
+passport.use(new LocalStrategy(
+    async (username, password, done) => {
+        try {
+            const user = await models.User.findOne({ where: {username: username} });
+            if (!user) return done(null, false);
+            if (user.password != password) return done(null, false);
+            return done(null, user);
+        } catch (err) {
+            return done(err);
+        } 
+    }
+));
+
 app.use('/carts', routes.cart);
 app.use('/orders', routes.order);
 app.use('/users', routes.user);
 app.use('/products', routes.product);
 
-// you can use it as middleware to protected pages - user profile, maybe admin?
-function ensureAuthentication(req, res, next) {
-    if (req.session.authenticated) {
-      return next();
-    } else {
-      res.status(403).json({ msg: "You're not authorized to view this page" });
-    }
-  }
+app.get("/logout", (req, res) => {
+    req.logout();
+    res.redirect('/login');
+});
 
 app.get('/login', (req, res) => {
     console.log('Tu w koncu bedzie render do view logowania')
 });
 
-app.post('/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const user = await req.context.models.User.findOne({ where: {username: username} });
-        if (!user) return res.status(403).json({ msg: "No user found!" });
-        if (user.password === password) {
-            req.session.authenticated = true;
-            req.session.user = {
-                username,
-                password,
-            }
-            console.log(req.session);
-            res.redirect('/products');
-        } else {
-            res.status(403).json({ msg: "Bad Credentials" });
-        }
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ msg: "Error occured" });
-    };
+app.get('/profile', (req, res) => {
+    console.log(`u w koncu bedzie render do view profilu albo czegos innego i pass user object stored in session, res.render("profile", {user: req.user});`)
 });
 
+app.post('/login', passport.authenticate('local', {failureRedirect: '/login'}),
+    (req, res) => {
+      res.redirect("profile");
+    }
+);
 
+app.post("/register", async (req, res) => {
+    const { username, password, email } = req.body;
+    
+    try {
+      const newuser = await req.context.models.User.create({
+        username: username, 
+        password: password,
+        email: email,
+        created_at: new Date()
+      });
+      res.status(201).json({
+        msg: 'User created',
+        newuser
+      });
+    } catch (error) {
+      res.status(500).json({
+        msg: 'User wasnt created',
+        error
+      });
+    }
+});
+  
+  
 
 const eraseDatabaseOnSync = true;
 
