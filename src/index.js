@@ -70,8 +70,13 @@ app.use('/orders', routes.order);
 app.use('/users', routes.user);
 app.use('/products', routes.product);
 
-app.get("/logout", (req, res) => {
-    req.logout();
+app.get('/logout', (req, res) => {
+    req.logout(function(err) {
+        if(err) {
+            console.log(err);
+            return;
+        }
+    });
     res.redirect('/login');
 });
 
