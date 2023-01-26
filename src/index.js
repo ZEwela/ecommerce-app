@@ -3,12 +3,12 @@ import express from 'express';
 import cors from 'cors';
 import models, { sequelize } from './models';
 import routes from './routes';
-import { DATE } from 'sequelize';
 const session = require("express-session");
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const app = express();
+const bcrypt = require("bcrypt");
 const port = process.env.PORT;
 
 app.use(
@@ -39,7 +39,6 @@ app.use((req, res, next ) => {
 });
 
 passport.serializeUser((user, done) => {
-    console.log(user);
     done(null, user.user_id);
 });
 
@@ -57,7 +56,8 @@ passport.use(new LocalStrategy(
         try {
             const user = await models.User.findOne({ where: {username: username} });
             if (!user) return done(null, false);
-            if (user.password != password) return done(null, false);
+            const isValidPassword = await bcrypt.compare(password, user.password);
+            if (!isValidPassword) return done(null, false);    
             return done(null, user);
         } catch (err) {
             return done(err);
@@ -98,21 +98,22 @@ app.post("/register", async (req, res) => {
     const { username, password, email } = req.body;
     
     try {
-      const newuser = await req.context.models.User.create({
-        username: username, 
-        password: password,
-        email: email,
-        created_at: new Date()
-      });
-      res.status(201).json({
-        msg: 'User created',
-        newuser
-      });
+        const hash = await bcrypt.hash(password, 10);
+        const newuser = await req.context.models.User.create({
+            username: username, 
+            password: hash,
+            email: email,
+            created_at: new Date()
+        });
+        res.status(201).json({
+            msg: 'User created',
+            newuser
+        });
     } catch (error) {
-      res.status(500).json({
-        msg: 'User wasnt created',
-        error
-      });
+        res.status(500).json({
+            msg: 'User wasnt created',
+            error
+        });
     }
 });
   

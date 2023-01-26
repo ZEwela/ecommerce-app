@@ -21,6 +21,7 @@
     "sinon": "^15.0.1"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "connect-session-sequelize": "^7.1.5",
     "cors": "^2.8.5",
