@@ -4,6 +4,7 @@ import cors from 'cors';
 import models, { sequelize } from './models';
 import routes from './routes';
 import {createDatabase} from '../seed';
+const helmet = require("helmet");
 const session = require("express-session");
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const passport = require("passport");
@@ -15,7 +16,12 @@ const port = process.env.PORT;
 app.use(
     session({
       secret: process.env.SESSIONSECRET,
-      cookie: {maxAge: 172800000, secure: true, sameSite: "none"},
+      cookie: {
+        maxAge: 172800000, 
+        secure: true, 
+        sameSite: "none",
+        httpOnly: true,
+      },
       resave: false,
       saveUninitialized: false,
       store: new SequelizeStore({
@@ -24,7 +30,7 @@ app.use(
     })
   })
 );
-
+app.use(helmet());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
