@@ -12,6 +12,8 @@ const LocalStrategy = require("passport-local").Strategy;
 const app = express();
 const bcrypt = require("bcrypt");
 const port = process.env.PORT;
+const { body, validationResult } = require('express-validator');
+const sanitizeHtml = require('sanitize-html');
 
 app.use(
     session({
@@ -95,34 +97,66 @@ app.get('/profile', (req, res) => {
     console.log(`u w koncu bedzie render do view profilu albo czegos innego i pass user object stored in session, res.render("profile", {user: req.user});`)
 });
 
-app.post('/login', passport.authenticate('local', {failureRedirect: '/login'}),
+// curl -X POST -d "username=pompik&password=76hdhfdjdmjsn" http://localhost:3000/login
+app.post('/login', 
+    body('username')
+        .notEmpty()
+        .trim()
+        .escape(),
+    body('password')
+        .isLength({ min: 8 })
+        .trim()
+        .escape(),
+    passport.authenticate('local', {failureRedirect: '/login'}),
     (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+          return res.status(400).json({ errors: errors.array() });
+      }
       res.redirect("profile");
     }
 );
 
-app.post("/register", async (req, res) => {
-    const { username, password, email } = req.body;
-    
-    try {
-        const hash = await bcrypt.hash(password, 10);
-        const newuser = await req.context.models.User.create({
-            username: username, 
-            password: hash,
-            email: email,
-            created_at: new Date()
-        });
-        res.status(201).json({
-            msg: 'User created',
-            newuser
-        });
-    } catch (error) {
-        res.status(500).json({
-            msg: 'User wasnt created',
-            error
-        });
+
+// curl -X POST -d "username=pompik&password=76hdhfdjdmjsn&email=pompik@gamil.com" http://localhost:3000/register
+app.post("/register",
+        body('username').notEmpty(),
+        body('email').normalizeEmail().isEmail(),
+        body('password')
+            .isLength({ min: 8 })
+            .withMessage('must be at least 8 chars long')
+            .matches(/\d/)
+            .withMessage('must contain a number')
+            .trim()
+            .escape(),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { username, password, email } = req.body;
+        
+        try {
+            const hash = await bcrypt.hash(password, 10);
+            const newuser = await req.context.models.User.create({
+                username: username, 
+                password: hash,
+                email: email,
+                created_at: new Date()
+            });
+            res.status(201).json({
+                msg: 'User created',
+                newuser
+            });
+        } catch (error) {
+            res.status(500).json({
+                msg: 'User wasnt created',
+                error
+            });
+        }
     }
-});
+);
 
 
 // const eraseDatabaseOnSync = true;
